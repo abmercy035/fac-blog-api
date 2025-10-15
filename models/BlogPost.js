@@ -82,22 +82,39 @@ blogPostSchema.pre('save', function (next) {
 });
 
 
-// Generate slug before saving
 blogPostSchema.pre('findOneAndUpdate', function (next) {
-	if (this.isModified('title') && !this.slug) {
-		this.slug = this.title
-			.toLowerCase()
-			.replace(/[^\w\s-]/g, '')
-			.replace(/\s+/g, '-')
-			.substring(0, 100);
-	}
+  const update = this.getUpdate();
 
-	if (this.isModified('isPublished') && this.isPublished && !this.publishedAt) {
-		this.publishedAt = new Date();
-	}
+  // Slug logic
+  if (update.title && !update.slug) {
+    update.slug = update.title
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .substring(0, 100);
+  }
 
-	this.updatedAt = new Date();
-	next();
+  // PublishedAt logic
+  if ((update.isPublished || (update.$set && update.$set.isPublished)) &&
+      !(update.publishedAt || (update.$set && update.$set.publishedAt))) {
+    const isPublished = update.isPublished ?? (update.$set && update.$set.isPublished);
+    if (isPublished) {
+      if (update.$set) {
+        update.$set.publishedAt = new Date();
+      } else {
+        update.publishedAt = new Date();
+      }
+    }
+  }
+
+  // Always update updatedAt
+  if (update.$set) {
+    update.$set.updatedAt = new Date();
+  } else {
+    update.updatedAt = new Date();
+  }
+
+  next();
 });
 
 // Indexes for better query performance
