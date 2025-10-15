@@ -188,17 +188,6 @@ Authorization: Bearer <your-jwt-token>
 - isActive, receiveNewPostAlerts
 - source, subscribedAt
 
-## 🧪 Default Test Users
-
-After running the seed script, you can use these credentials:
-
-**Admin Account:**
-- Username: `admin`
-- Password: `admin123`
-
-**Editor Account:**
-- Username: `editor1`
-- Password: `editor123`
 
 ## 🛠️ Environment Variables
 
