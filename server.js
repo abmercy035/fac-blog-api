@@ -11,47 +11,22 @@ connectDB();
 
 const app = express();
 
-// CORS Configuration
-const corsOptions = {
-	origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-	credentials: true,
-	optionsSuccessStatus: 200
-};
-
-app.use(cors({
-	origin: (url, callback) => {
-		const accept = [process.env.FRONTEND_URL,
-		"http://localhost:3000",
-		];
-		if (accept.includes(url)) {
-			callback(null, true);
-		} else {
-			callback(new Error('Not allowed by CORS'));
-		}
-	},
-	methods: [
-		'GET', 'POST', 'PUT',
-		'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
-	allowedHeaders: [
-		'Content-Type', 'Origin', 'X-Requested-With',
-		'Accept', "set-cookie", "Content-Type",
-		"Access-Control-Allow-Origin", "Access-Control-Allow-Credentials",
-		'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization'	],
-	optionsSuccessStatus: 200,
-	credentials: true,
-}));
-
-app.set("trust proxy", 1);
-app.use(function (req, res, next) {
-	res.header("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
-	res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
-	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-	res.header('Access-Control-Allow-Credentials', true);
-	next();
-});
 
 // Middleware
-app.use(cors(corsOptions));
+app.set("trust proxy", 1);
+
+// CORS Configuration
+const allowedOrigins = [process.env.FRONTEND_URL, 'http://localhost:3000'];
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
+  allowedHeaders: [
+    'Content-Type', 'Origin', 'X-Requested-With',
+    'Accept', 'Authorization'
+  ],
+  optionsSuccessStatus: 200
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
