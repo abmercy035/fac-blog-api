@@ -40,7 +40,7 @@ const blogPostSchema = new mongoose.Schema({
 	},
 	isPublished: {
 		type: Boolean,
-		default: false
+		default: true
 	},
 	likes: {
 		type: Number,

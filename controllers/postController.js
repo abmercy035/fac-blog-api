@@ -18,7 +18,6 @@ const getPosts = async (req, res) => {
 			.sort({ publishedAt: -1 })
 			.skip(skip)
 			.limit(limit);
-
 		const total = await BlogPost.countDocuments({ isPublished: true });
 
 		res.json({
@@ -83,7 +82,6 @@ const getPostsByCategory = async (req, res) => {
 		const skip = (page - 1) * limit;
 
 		const category = await Category.findOne({ slug: req.params.slug });
-		console.log(category)
 		if (!category) {
 			return res.status(404).json({ message: 'Category not found' });
 		}
@@ -200,9 +198,7 @@ const likePost = async (req, res) => {
 // @access  Private (Editor/Admin)
 const createPost = async (req, res) => {
 	try {
-		console.log(req.user._id.toString())
 		const postBody = { ...req.body, author: req.user._id.toString() }
-		console.log(postBody)
 
 		const post = await BlogPost.create(postBody);
 		await post.populate('author');

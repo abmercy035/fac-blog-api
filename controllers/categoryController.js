@@ -1,3 +1,4 @@
+const BlogPost = require('../models/BlogPost');
 const Category = require('../models/Category');
 
 // @desc    Get all categories
@@ -6,8 +7,20 @@ const Category = require('../models/Category');
 const getCategories = async (req, res) => {
 	try {
 		const categories = await Category.find();
-		res.json(categories);
+		  const categoriesWithPostCounts = await Promise.all(
+    categories.map(async (cat) => {
+      const posts = await BlogPost.countDocuments({ isPublished: true, 	category : cat._id}) 
+      return {
+        ...cat.toObject(),
+        postCount: posts,
+      }
+    })
+  )
+
+		console.log(categoriesWithPostCounts);
+		res.json(categoriesWithPostCounts);
 	} catch (error) {
+		console.log(error)
 		res.status(500).json({ message: error.message });
 	}
 };
