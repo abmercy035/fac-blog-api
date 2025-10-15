@@ -23,7 +23,7 @@ const getAuthor = async (req, res) => {
 			username: req.params.username,
 			role: { $in: ['editor', 'admin'] }
 		}).select('-password');
-
+		console.log(author)
 		if (!author) {
 			return res.status(404).json({ message: 'Author not found' });
 		}
