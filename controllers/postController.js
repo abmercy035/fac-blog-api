@@ -1,4 +1,7 @@
 const BlogPost = require('../models/BlogPost');
+const User = require('../models/User');
+const Comment = require('../models/Comment');
+const Category = require('../models/Category');
 
 // @desc    Get all published posts with pagination
 // @route   GET /api/posts?page=1&limit=10
@@ -9,16 +12,14 @@ const getPosts = async (req, res) => {
 		const limit = parseInt(req.query.limit) || 10;
 		const skip = (page - 1) * limit;
 
-		const posts = await BlogPost.find({ isPublished: true })		
+		const posts = await BlogPost.find({ isPublished: true })
 			.populate('author')
 			.populate('category')
 			.sort({ publishedAt: -1 })
 			.skip(skip)
 			.limit(limit);
-		console.log(posts)
 
 		const total = await BlogPost.countDocuments({ isPublished: true });
-		console.log(total)
 
 		res.json({
 			posts,
@@ -77,7 +78,10 @@ const getPostById = async (req, res) => {
 // @access  Public
 const getPostsByCategory = async (req, res) => {
 	try {
-		const Category = require('../models/Category');
+		const page = parseInt(req.query.page) || 1;
+		const limit = parseInt(req.query.limit) || 10;
+		const skip = (page - 1) * limit;
+
 		const category = await Category.findOne({ slug: req.params.slug });
 		console.log(category)
 		if (!category) {
@@ -90,11 +94,18 @@ const getPostsByCategory = async (req, res) => {
 		})
 			.populate('author')
 			.populate('category')
-			.sort({ publishedAt: -1 });
-			
-		console.log(posts)
+			.sort({ publishedAt: -1 })
+			.skip(skip)
+			.limit(limit);
+	
+		const total = await BlogPost.countDocuments({ isPublished: true, 	category: category._id});
 
-		res.json(posts);
+		res.json({
+			posts,
+			total,
+			page,
+			pages: Math.ceil(total / limit)
+		});
 	} catch (error) {
 		res.status(500).json({ message: error.message });
 	}
@@ -105,7 +116,10 @@ const getPostsByCategory = async (req, res) => {
 // @access  Public
 const getPostsByAuthor = async (req, res) => {
 	try {
-		const User = require('../models/User');
+		const page = parseInt(req.query.page) || 1;
+		const limit = parseInt(req.query.limit) || 10;
+		const skip = (page - 1) * limit;
+
 		const author = await User.findOne({ username: req.params.username });
 
 		if (!author) {
@@ -118,9 +132,19 @@ const getPostsByAuthor = async (req, res) => {
 		})
 			.populate('author')
 			.populate('category')
-			.sort({ publishedAt: -1 });
+			.sort({ publishedAt: -1 })
+			.skip(skip)
+			.limit(limit);
 
-		res.json(posts);
+	
+		const total = await BlogPost.countDocuments({ isPublished: true,	author: author._id});
+
+		res.json({
+			posts,
+			total,
+			page,
+			pages: Math.ceil(total / limit)
+		});
 	} catch (error) {
 		res.status(500).json({ message: error.message });
 	}
@@ -178,9 +202,12 @@ const createPost = async (req, res) => {
 	try {
 		console.log(req.user._id.toString())
 		const postBody = { ...req.body, author: req.user._id.toString() }
+		console.log(postBody)
+
 		const post = await BlogPost.create(postBody);
 		await post.populate('author');
 		await post.populate('category');
+		console.log(post)
 
 		res.status(201).json(post);
 	} catch (error) {
@@ -224,7 +251,6 @@ const deletePost = async (req, res) => {
 		}
 
 		// Also delete related comments
-		const Comment = require('../models/Comment');
 		await Comment.deleteMany({ postId: post._id });
 
 		res.json({ message: 'Post deleted successfully' });
