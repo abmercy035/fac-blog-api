@@ -81,6 +81,25 @@ blogPostSchema.pre('save', function (next) {
 	next();
 });
 
+
+// Generate slug before saving
+blogPostSchema.pre('findOneAndUpdate', function (next) {
+	if (this.isModified('title') && !this.slug) {
+		this.slug = this.title
+			.toLowerCase()
+			.replace(/[^\w\s-]/g, '')
+			.replace(/\s+/g, '-')
+			.substring(0, 100);
+	}
+
+	if (this.isModified('isPublished') && this.isPublished && !this.publishedAt) {
+		this.publishedAt = new Date();
+	}
+
+	this.updatedAt = new Date();
+	next();
+});
+
 // Indexes for better query performance
 blogPostSchema.index({ slug: 1 });
 blogPostSchema.index({ author: 1 });

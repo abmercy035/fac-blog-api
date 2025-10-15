@@ -10,6 +10,7 @@ const getPosts = async (req, res) => {
 		const skip = (page - 1) * limit;
 
 		const posts = await BlogPost.find({ isPublished: true })
+		console.log(posts)
 			.populate('author')
 			.populate('category')
 			.sort({ publishedAt: -1 })
@@ -17,6 +18,7 @@ const getPosts = async (req, res) => {
 			.limit(limit);
 
 		const total = await BlogPost.countDocuments({ isPublished: true });
+		console.log(total)
 
 		res.json({
 			posts,
@@ -77,7 +79,7 @@ const getPostsByCategory = async (req, res) => {
 	try {
 		const Category = require('../models/Category');
 		const category = await Category.findOne({ slug: req.params.slug });
-
+		console.log(category)
 		if (!category) {
 			return res.status(404).json({ message: 'Category not found' });
 		}
@@ -89,6 +91,8 @@ const getPostsByCategory = async (req, res) => {
 			.populate('author')
 			.populate('category')
 			.sort({ publishedAt: -1 });
+			
+		console.log(posts)
 
 		res.json(posts);
 	} catch (error) {
