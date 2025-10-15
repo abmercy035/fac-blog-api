@@ -9,13 +9,13 @@ const getPosts = async (req, res) => {
 		const limit = parseInt(req.query.limit) || 10;
 		const skip = (page - 1) * limit;
 
-		const posts = await BlogPost.find({ isPublished: true })
-		console.log(posts)
+		const posts = await BlogPost.find({ isPublished: true })		
 			.populate('author')
 			.populate('category')
 			.sort({ publishedAt: -1 })
 			.skip(skip)
 			.limit(limit);
+		console.log(posts)
 
 		const total = await BlogPost.countDocuments({ isPublished: true });
 		console.log(total)
