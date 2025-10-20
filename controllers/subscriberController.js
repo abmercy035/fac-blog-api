@@ -1,4 +1,5 @@
 const Subscriber = require('../models/Subscriber');
+const { sendWelcomeEmail } = require('../services/emailService');
 
 // @desc    Add a new subscriber
 // @route   POST /api/subscribers
@@ -23,6 +24,11 @@ const addSubscriber = async (req, res) => {
       email,
       name,
       source: source || 'homepage'
+    });
+
+    // Send welcome email asynchronously; do not block response
+    sendWelcomeEmail(email, name).catch((err) => {
+      console.error('Failed to send welcome email:', err);
     });
 
     res.status(201).json(subscriber);

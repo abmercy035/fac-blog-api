@@ -2,6 +2,8 @@ const BlogPost = require('../models/BlogPost');
 const User = require('../models/User');
 const Comment = require('../models/Comment');
 const Category = require('../models/Category');
+			const Subscriber = require('../models/Subscriber');
+			const { sendNewPostEmailBulk  } = require('../services/emailService');
 
 // @desc    Get all published posts with pagination
 // @route   GET /api/posts?page=1&limit=10
@@ -203,8 +205,33 @@ const createPost = async (req, res) => {
 		const post = await BlogPost.create(postBody);
 		await post.populate('author');
 		await post.populate('category');
-		console.log(post)
 
+		// Notify subscribers who opted in for new post alerts
+		try {
+
+			const subscribers = await Subscriber.find({ isActive: true, receiveNewPostAlerts: true }).select('email name');
+
+			const postUrl = `${process.env.FRONTEND_URL}/posts/${post.slug}`;
+	const authorEmail = (post.author?.email || '').toLowerCase();
+const recipientList = subscribers
+		.filter(s => s.email && s.email.toLowerCase() !== authorEmail)
+		.map(s => ({
+			email: s.email,
+			name: s.name || 'Friend',
+			title: post.title,
+			excerpt: post.excerpt || '',
+			postUrl
+		}));
+
+if (recipientList.length === 0) {
+		console.log("No recipients for new post notification.");
+		return;
+	}
+		await sendNewPostEmailBulk(recipientList);
+
+		} catch (err) {
+			console.error('Error sending new post notifications:', err);
+		}
 		res.status(201).json(post);
 	} catch (error) {
 		console.log(error)
