@@ -22,12 +22,11 @@ const addSubscriber = async (req, res) => {
 
     const subscriber = await Subscriber.create({
       email,
-      name,
       source: source || 'homepage'
     });
 
     // Send welcome email asynchronously; do not block response
-    sendWelcomeEmail(email, name).catch((err) => {
+    sendWelcomeEmail(email, "Subscriber").catch((err) => {
       console.error('Failed to send welcome email:', err);
     });
 

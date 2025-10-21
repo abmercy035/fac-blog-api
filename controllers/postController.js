@@ -3,7 +3,7 @@ const User = require('../models/User');
 const Comment = require('../models/Comment');
 const Category = require('../models/Category');
 			const Subscriber = require('../models/Subscriber');
-			const { sendNewPostEmailBulk  } = require('../services/emailService');
+const { sendNewPostEmailToAll } = require('../services/emailService');
 
 // @desc    Get all published posts with pagination
 // @route   GET /api/posts?page=1&limit=10
@@ -200,11 +200,17 @@ const likePost = async (req, res) => {
 // @access  Private (Editor/Admin)
 const createPost = async (req, res) => {
 	try {
+		// Debug: log incoming featuredImage to confirm client sent the Cloudinary URL
+		console.debug('[postController] incoming featuredImage:', req.body && req.body.featuredImage)
 		const postBody = { ...req.body, author: req.user._id.toString() }
 
 		const post = await BlogPost.create(postBody);
 		await post.populate('author');
 		await post.populate('category');
+
+
+
+
 
 		// Notify subscribers who opted in for new post alerts
 		try {
@@ -227,7 +233,7 @@ if (recipientList.length === 0) {
 		console.log("No recipients for new post notification.");
 		return;
 	}
-		await sendNewPostEmailBulk(recipientList);
+			await sendNewPostEmailToAll(recipientList);
 
 		} catch (err) {
 			console.error('Error sending new post notifications:', err);

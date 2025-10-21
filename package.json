@@ -9,8 +9,10 @@
     "seed": "node seed.js"
   },
   "dependencies": {
+    "@trycourier/courier": "^6.6.0",
     "axios": "^1.6.2",
     "bcryptjs": "^2.4.3",
+    "cloudinary": "^2.8.0",
     "cors": "^2.8.5",
     "date-fns": "latest",
     "dotenv": "^16.3.1",
@@ -19,7 +21,6 @@
     "mongoose": "^8.0.3"
   },
   "devDependencies": {
-
     "@types/node": "^22",
     "nodemon": "^3.0.2"
   }

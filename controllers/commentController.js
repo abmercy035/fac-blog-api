@@ -22,7 +22,6 @@ const getComments = async (req, res) => {
 const addComment = async (req, res) => {
 	try {
 		const { postId, author, email, content } = req.body;
-console.log(req.body)
 		// Check if post exists
 		const post = await BlogPost.findById(postId);
 		if (!post) {

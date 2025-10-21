@@ -38,6 +38,7 @@ const authorRoutes = require('./routes/authors');
 const categoryRoutes = require('./routes/categories');
 const subscriberRoutes = require('./routes/subscribers');
 const adminRoutes = require('./routes/admin');
+const cloudinaryRoutes = require('./routes/cloudinary');
 
 // Use routes
 app.use('/api/auth', authRoutes);
@@ -46,6 +47,7 @@ app.use('/api/comments', commentRoutes);
 app.use('/api/authors', authorRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/subscribers', subscriberRoutes);
+app.use('/api/cloudinary', cloudinaryRoutes);
 app.use('/api/admin', adminRoutes);
 
 // Health check route

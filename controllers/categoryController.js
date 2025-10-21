@@ -17,7 +17,6 @@ const getCategories = async (req, res) => {
     })
   )
 
-		console.log(categoriesWithPostCounts);
 		res.json(categoriesWithPostCounts);
 	} catch (error) {
 		console.log(error)
@@ -31,7 +30,6 @@ const getCategories = async (req, res) => {
 const getCategory = async (req, res) => {
 	try {
 		const category = await Category.findOne({ slug: req.params.slug });
-console.log({category})
 		if (!category) {
 			return res.status(404).json({ message: 'Category not found' });
 		}
