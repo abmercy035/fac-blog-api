@@ -86,7 +86,7 @@ module.exports = app;
 try {
   const startHealthCron = require('./health-cron')
   const healthUrl = process.env.HEALTH_PING_URL || `http://localhost:${PORT}/api/health`
-  startHealthCron({ url: healthUrl, intervalMs: 14 * 60 * 1000 })
+  startHealthCron({ url: healthUrl, intervalMs: (14 * 60 * 1000) + (59 * 1000) })
 } catch (err) {
   console.warn('health-cron not started:', err.message)
 }
