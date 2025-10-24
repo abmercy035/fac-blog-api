@@ -81,3 +81,12 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
+
+// Start health ping cron when running the server directly
+try {
+  const startHealthCron = require('./health-cron')
+  const healthUrl = process.env.HEALTH_PING_URL || `http://localhost:${PORT}/api/health`
+  startHealthCron({ url: healthUrl, intervalMs: 14 * 60 * 1000 })
+} catch (err) {
+  console.warn('health-cron not started:', err.message)
+}
