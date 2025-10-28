@@ -36,7 +36,6 @@ const blogPostSchema = new mongoose.Schema({
 	},
 	featuredImage: {
 		type: String,
-		default: '/placeholder.jpg'
 	},
 	isPublished: {
 		type: Boolean,

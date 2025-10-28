@@ -202,7 +202,8 @@ const createPost = async (req, res) => {
 	try {
 		// Debug: log incoming featuredImage to confirm client sent the Cloudinary URL
 		console.debug('[postController] incoming featuredImage:', req.body && req.body.featuredImage)
-		const postBody = { ...req.body, author: req.user._id.toString() }
+		const featuredImage = req.body.featuredImage ?? '/placeholder.jpg'
+		const postBody = { ...req.body, featuredImage, author: req.user._id.toString() }
 
 		const post = await BlogPost.create(postBody);
 		await post.populate('author');
