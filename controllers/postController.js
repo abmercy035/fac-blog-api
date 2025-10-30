@@ -209,10 +209,6 @@ const createPost = async (req, res) => {
 		await post.populate('author');
 		await post.populate('category');
 
-
-
-
-
 		// Notify subscribers who opted in for new post alerts
 		try {
 
