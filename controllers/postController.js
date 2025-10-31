@@ -200,8 +200,6 @@ const likePost = async (req, res) => {
 // @access  Private (Editor/Admin)
 const createPost = async (req, res) => {
 	try {
-		// Debug: log incoming featuredImage to confirm client sent the Cloudinary URL
-		console.debug('[postController] incoming featuredImage:', req.body && req.body.featuredImage)
 		const featuredImage = req.body.featuredImage ?? '/placeholder.jpg'
 		const postBody = { ...req.body, featuredImage, author: req.user._id.toString() }
 

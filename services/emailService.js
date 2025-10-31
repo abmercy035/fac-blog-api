@@ -76,7 +76,7 @@ const chunkArray = (array, size) => {
 };
 
 const sendNewPostEmailToAll = async (recipients) => {
-	const CHUNK_SIZE = 1000;
+	const CHUNK_SIZE = 100;
 	const chunks = chunkArray(recipients, CHUNK_SIZE);
 
 	for (const chunk of chunks) {
@@ -103,7 +103,7 @@ const sendNewPostEmailBulk = async (recipients = []) => {
 
 		console.log(`Email sent to users.`);
 
-		return jobId;
+		return true;
 	} catch (error) {
 		console.error("Bulk sendNewPostEmail error:", error);
 		throw error;
